@@ -1,0 +1,23 @@
+[project]
+name = "atcoder-workspace"
+version = "0.1.0"
+description = "Local AtCoder workspace for C++ and Python"
+requires-python = ">=3.13"
+dependencies = [
+    "ac-library-python",
+    "online-judge-tools",
+    "sortedcontainers",
+]
+
+[dependency-groups]
+dev = [
+    "ruff",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py313"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I"]
+ignore = ["E731"]

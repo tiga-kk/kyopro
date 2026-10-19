@@ -1,0 +1,12 @@
+CompileFlags:
+  Compiler: g++-15
+  Add:
+    - -std=gnu++23
+    - -Wall
+    - -Wextra
+    - -Iac-library
+    - -DATCODER
+    - -DONLINE_JUDGE
+    - -Wshadow
+Diagnostics:
+  UnusedIncludes: None

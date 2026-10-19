@@ -1,0 +1,25 @@
+# Local tools and editor preferences
+/.agents/
+/.codex/
+/.vscode/
+/.tabignore
+
+# Local environment and input
+/.venv/
+/input.txt
+/.env
+/.env.*
+!/.env.example
+
+# Build outputs
+/.build/
+/build/
+*.o
+*.gch
+*.out
+/a.out
+
+# Python cache
+__pycache__/
+*.py[cod]
+.ruff_cache/
