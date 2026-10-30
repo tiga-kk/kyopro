@@ -37,6 +37,31 @@ private:
     std::vector<int> mids_;
     std::vector<std::vector<int>> positions_;
 
+    // Persistent last-occurrence minima on values [0, n].
+    struct MexNode { int left = 0, right = 0, last = -1; };
+    std::vector<MexNode> mex_nodes_{MexNode{}};
+    std::vector<int> mex_roots_{0};
+
+    int update_mex(int node, int lo, int hi, int value, int pos) {
+        int next = static_cast<int>(mex_nodes_.size());
+        mex_nodes_.push_back(mex_nodes_[node]);
+        if (hi - lo == 1) {
+            mex_nodes_[next].last = pos;
+        } else {
+            int mid = lo + (hi - lo) / 2;
+            if (value < mid) {
+                int child = update_mex(mex_nodes_[node].left, lo, mid, value, pos);
+                mex_nodes_[next].left = child;
+            } else {
+                int child = update_mex(mex_nodes_[node].right, mid, hi, value, pos);
+                mex_nodes_[next].right = child;
+            }
+            mex_nodes_[next].last = std::min(mex_nodes_[mex_nodes_[next].left].last,
+                                             mex_nodes_[mex_nodes_[next].right].last);
+        }
+        return next;
+    }
+
     int lower_id(long long x) const {
         return static_cast<int>(std::lower_bound(values_.begin(), values_.end(), x) - values_.begin());
     }
@@ -86,6 +111,11 @@ public:
     WaveletMatrix() = default;
 
     explicit WaveletMatrix(const std::vector<long long>& a) : n_(static_cast<int>(a.size())), values_(a) {
+        for (int i = 0; i < n_; ++i) {
+            int root = mex_roots_.back();
+            if (0 <= a[i] && a[i] <= n_) root = update_mex(root, 0, n_ + 1, static_cast<int>(a[i]), i);
+            mex_roots_.push_back(root);
+        }
         std::sort(values_.begin(), values_.end());
         values_.erase(std::unique(values_.begin(), values_.end()), values_.end());
 
@@ -224,5 +254,21 @@ public:
         return kth_largest(l, r, 0);
     }
 
-    // range_mex は要件上「可能なら」なので今回は未実装。
+    // Smallest missing nonnegative integer in [l, r). O(log(N + 1)).
+    // The auxiliary persistent tree costs O(N log(N + 1)) build time/space.
+    int range_mex(int l, int r) const {
+        assert(0 <= l && l <= r && r <= n_);
+        int node = mex_roots_[r], lo = 0, hi = n_ + 1;
+        while (hi - lo > 1) {
+            int mid = lo + (hi - lo) / 2;
+            if (mex_nodes_[mex_nodes_[node].left].last < l) {
+                node = mex_nodes_[node].left;
+                hi = mid;
+            } else {
+                node = mex_nodes_[node].right;
+                lo = mid;
+            }
+        }
+        return lo;
+    }
 };

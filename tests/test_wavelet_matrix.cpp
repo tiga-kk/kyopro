@@ -4,6 +4,13 @@ using namespace std;
 
 namespace {
 
+int naive_mex(const vector<long long>& a, int l, int r) {
+    set<long long> values(a.begin() + l, a.begin() + r);
+    int x = 0;
+    while (values.contains(x)) ++x;
+    return x;
+}
+
 int naive_rank(const vector<long long>& a, long long x, int l, int r) {
     return static_cast<int>(count(a.begin() + l, a.begin() + r, x));
 }
@@ -57,6 +64,9 @@ optional<long long> naive_next_value(const vector<long long>& a, int l, int r, l
 void check_all_queries(const vector<long long>& a) {
     WaveletMatrix wm(a);
     assert(wm.size() == static_cast<int>(a.size()));
+    for (int l = 0; l <= static_cast<int>(a.size()); ++l)
+        for (int r = l; r <= static_cast<int>(a.size()); ++r)
+            assert(wm.range_mex(l, r) == naive_mex(a, l, r));
     for (int i = 0; i < static_cast<int>(a.size()); ++i) {
         assert(wm.access(i) == a[i]);
     }
@@ -67,8 +77,8 @@ void check_all_queries(const vector<long long>& a) {
 
     vector<long long> probes = values;
     if (!values.empty()) {
-        probes.push_back(values.front() - 1);
-        probes.push_back(values.back() + 1);
+        if (values.front() != LLONG_MIN) probes.push_back(values.front() - 1);
+        if (values.back() != LLONG_MAX) probes.push_back(values.back() + 1);
     }
     probes.push_back(-100);
     probes.push_back(0);
@@ -146,6 +156,7 @@ void check_sampled_queries(const vector<long long>& a, mt19937_64& rng) {
         if (l > r) swap(l, r);
         ++r;
         assert(1 <= r - l);
+        assert(wm.range_mex(l, r) == naive_mex(a, l, r));
 
         long long x = probes[probe_dist(rng)];
         int rr = uniform_int_distribution<int>(0, static_cast<int>(a.size()))(rng);
@@ -174,6 +185,10 @@ void check_sampled_queries(const vector<long long>& a, mt19937_64& rng) {
 }
 
 void test_fixed_cases() {
+    assert(WaveletMatrix().range_mex(0, 0) == 0);
+    check_all_queries({});
+    check_all_queries({0, 1, 2, 3, 4});
+    check_all_queries({0, 0, 1, 1, 2, -1, LLONG_MAX, LLONG_MIN});
     check_all_queries(vector<long long>{5});
     check_all_queries(vector<long long>{7, 7, 7, 7, 7});
     check_all_queries(vector<long long>{-5, -1, -5, 3, 0, 3, 9, -2});

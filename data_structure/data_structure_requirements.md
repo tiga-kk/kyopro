@@ -363,7 +363,7 @@ implicit treap の代わりではなく、静的配列用の別系統データ�
 - `next_value(l, r, lower)`
 - `range_min(l, r)`
 - `range_max(l, r)`
-- `range_mex(l, r)` 可能なら実装
+- `range_mex(l, r)` 実装済み（最小の未出現非負整数、空区間は 0）
 - `topk(l, r, k)` は必要なら追加
 
 ### 値の扱い
@@ -410,6 +410,14 @@ implicit treap の代わりではなく、静的配列用の別系統データ�
 - `kth`: `O(log σ)`
 - `range_freq`: `O(log σ)`
 - `prev/next`: `O(log σ)`
+
+### range_mex の補助構造
+
+最終出現位置の最小値を永続セグ木で管理する。
+負数と N より大きい値は mex 用の構造には登録しない。
+
+- クエリ: `O(log(N + 1))`
+- 追加の構築時間・空間: `O(N log(N + 1))`
 
 ### 得意な用途
 
