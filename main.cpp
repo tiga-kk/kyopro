@@ -7,7 +7,6 @@
 #include <chrono>
 #include <cmath>
 #include <complex>
-#include <cstdio>
 #include <cstring>
 #include <ctime>
 #include <fstream>
@@ -51,43 +50,46 @@ uint64_t seed = chrono::duration_cast<chrono::nanoseconds>(
 mt19937_64 rng(seed);
 int randint(int l, int r) { return uniform_int_distribution<int>(l, r)(rng); }
 
-template <class T> T ceil(T a, T b) {
-  assert(b != 0);
-  T q = a / b;
-  T r = a % b;
-  if (r != 0 && ((r > 0) == (b > 0))) {
-    q++;
-  }
-  return q;
+bool f(const P &a, const P &b) {
+  return (a.first * b.second - a.second * b.first) > 0;
 }
 
 int solve() {
-  int n, q;
-  cin >> n >> q;
-  vector<int> a(n + 1, 0);
-  rep(i, 1, n + 1) cin >> a[i];
-  vector<int> sum1(n + 1, 0);
-  vector<int> sum2(n + 1, 0);
-  vector<int> idx(n + 1, 0);
-  rep(i, 1, n + 1) {
-    sum1[i] = sum1[i - 1] + a[i];
-    sum2[i] = sum2[i - 1] + sum1[i];
-    idx[i] = idx[i - 1] + i;
+  int n;
+  cin >> n;
+  set<P> s;
+  vector<P> v(n);
+  int ans = 0;
+  int now = 0;
+  rep(i, 0, n) {
+    int x, y;
+    cin >> x >> y;
+    bool tf = false;
+    if (y < 0 || (y == 0 && x < 0)) {
+      tf = true;
+      x = -x;
+      y = -y;
+    }
+    v[i].first = x;
+    v[i].second = y;
+    if (!tf) {
+      continue;
+    }
+    s.insert({x, y});
+    now++;
   }
-
-  while (q--) {
-    int l, r;
-    cin >> l >> r;
-    auto itrl = lower_bound(all(idx), l);
-    auto itrr = lower_bound(all(idx), r);
-    int idxl = itrl - idx.begin();
-    int idxr = itrr - idx.begin();
-    int ans = 0;
-    ans += sum2[idxr] - sum2[idxl - 1];
-    ans -= sum1[l - 1 - idxl * (idxl - 1) / 2];
-    ans -= sum1[idxr] - sum1[r - idxr * (idxr - 1) / 2];
-    cout << ans << endl;
+  now = n - now;
+  ans = max(now, n - now);
+  sort(v.begin(), v.end(), f);
+  rep(i, 0, n) {
+    if (s.count(v[i])) {
+      now++;
+    } else {
+      now--;
+    }
+    ans = max({ans, now, n - now});
   }
+  cout << ans << endl;
   return 0;
 }
 
@@ -99,7 +101,7 @@ signed main() {
   cin.tie(nullptr);
   cout << fixed << setprecision(15);
   int t = 1;
-  // cin>>t;
+  cin >> t;
   while (t--) {
     solve();
   }

@@ -3,6 +3,8 @@
 /.codex/
 /.vscode/
 /.tabignore
+/ac-library/
+/README.md
 
 # Local environment and input
 /.venv/
@@ -14,6 +16,7 @@
 # Build outputs
 /.build/
 /build/
+/stress_failures/
 *.o
 *.gch
 *.out

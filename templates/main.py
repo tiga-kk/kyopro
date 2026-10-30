@@ -1,3 +1,4 @@
+# Source: https://github.com/tiga-kk/kyopro
 from __future__ import annotations
 
 import sys

@@ -4,8 +4,7 @@ set -euo pipefail
 sudo apt update
 sudo apt install -y \
   build-essential make git curl ca-certificates \
-  gcc-15 g++-15 gdb clangd \
-  pypy3
+  gcc-15 g++-15 gdb clangd libboost-dev
 
 # uvは既に入っている前提。なければ公式手順で入れてください。
 uv --version

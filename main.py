@@ -47,6 +47,13 @@ def randint(l: int, r: int) -> int:
 
 
 def solve() -> int:
+    n = int(input())
+    a = []
+    ans = 0
+    for i in range(n):
+        ans += i-1
+        a.append(ans)
+        print(ans)
     return 0
 
 

@@ -1,3 +1,4 @@
+// Source: https://github.com/tiga-kk/kyopro
 #include <algorithm>
 #include <array>
 #include <atcoder/all>
@@ -7,6 +8,7 @@
 #include <chrono>
 #include <cmath>
 #include <complex>
+#include <cstdint>
 #include <cstring>
 #include <ctime>
 #include <fstream>
